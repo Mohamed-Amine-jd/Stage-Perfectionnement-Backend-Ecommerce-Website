@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerce.user;
 
 
+import com.ecommerce.ecommerce.config.ByCryptConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,9 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/users")
 public class UserController {
+
+    @Autowired
+    private ByCryptConfig byCryptConfig;
 
     @Autowired
     private UserService userService;
@@ -35,8 +39,12 @@ public class UserController {
 
     @PostMapping("/add")
     public ResponseEntity<User> addUser(@RequestBody User user) {
+        String hashedpass =(byCryptConfig.encoder().encode(user.getMd()));
+
+
+        user.setMd(hashedpass);
         User newUser = userService.addUser(user);
-//        newUser.setMd();
+
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
